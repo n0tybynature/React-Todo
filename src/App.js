@@ -1,13 +1,9 @@
-import React, {useState} from 'react';
+import React from 'react';
 import TodoForm from "./components/TodoForm"
 import TodoList from "./components/TodoList"
-import Todo from "./components/Todo"
 
-const todos = [
-  {
-    
-  }
-]
+
+const todos = [{}]
 
 
 class App extends React.Component {
@@ -15,27 +11,49 @@ class App extends React.Component {
   // design `App` to be the parent component of your application.
   // this component is going to take care of state, and any change handlers you need to work with your state
 
-  // constructor (){
-  //   super();
-  //   this.state = {
-  //     todolist={todos}
-  //   }
-  // }
+  constructor (){
+    super();
+      this.state= {todos}
+  }
 
-  handleItemToggle = () => {
-    const newTodo = this.state.todolist
-    newTodo[0].done = true;
+  handleToggle = (todosId) => {
     this.setState({
-      todolist: newTodo
+      todos: this.state.todos.map(task =>{
+        if (todosId === task.id){
+          return({
+            ...task,
+            completed: !task.completed
+          });
+        } else {
+          return task;
+        }
+      })
     })
   }
 
 
+  handleAdd = task => {
+    this.setState({
+      todos:[...this.state.todos, { task: task, id: Date.now(), completed: false}]
+    })
+  }
+
+  handleClearCompleted = e => {
+    e.preventDefault();
+    const newTodoList = this.state.todos.filter(item =>{
+      return (!item.completed);
+    });
+    this.setState({
+      todos: newTodoList
+    })
+  }
+
   render() {
     return (
       <div>
-        <h2>Todo List: MVP!</h2>
-        <TodoForm/>
+        <h2>To do List: MVP!</h2>
+        <TodoList todos={this.state.todos} handleToggle={this.handleToggle}/>
+        <TodoForm handleAdd={this.handleAdd} handleClearCompleted={this.handleClearCompleted}/>
       </div>
     );
   }
